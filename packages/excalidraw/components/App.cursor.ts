@@ -96,9 +96,8 @@ export class AppCursor {
       this.set(CURSOR_TYPE.CROSSHAIR);
       // do nothing if image tool is selected which suggests there's
       // an image-preview set as the cursor
-      // Ignore custom type as well and let host decide
-    } else if (activeTool.type !== "image") {
-      this.set(CURSOR_TYPE.AUTO);
+      // Ignore custom type as well and let host decide — a host-set cursor
+      // (`setCursor`) must survive the applyForTool() on every pointermove
     }
   };
 
