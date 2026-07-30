@@ -3,6 +3,7 @@ import { pointFrom, pointRotateRads } from "@excalidraw/math";
 import {
   elementCenterPoint,
   getCommonBounds,
+  getElementAbsoluteCoords,
   getElementPointsCoords,
   getLineHeightInPx,
 } from "@excalidraw/element";
@@ -18,10 +19,16 @@ import {
 import {
   isLinearElement,
   isFreeDrawElement,
+  isImageElement,
   isTextElement,
   isFrameLikeElement,
 } from "@excalidraw/element";
-import { KEYS, arrayToMap, getLineHeight } from "@excalidraw/common";
+import {
+  DEFAULT_TRANSFORM_HANDLE_SPACING,
+  KEYS,
+  arrayToMap,
+  getLineHeight,
+} from "@excalidraw/common";
 
 import type { GlobalPoint, LocalPoint, Radians } from "@excalidraw/math";
 
@@ -343,6 +350,95 @@ export class Pointer {
 
 const mouse = new Pointer("mouse");
 
+// actionboard: the rotation handle is gone — rotation starts from the ring
+// outside a corner handle. This shim keeps the legacy `UI.rotate` contract
+// (`mouseMove` is a delta from the old top handle, and the final angle
+// depends only on where the pointer ends), so existing call sites keep
+// their expectations: press in the nw ring, then release at the point whose
+// pointer angle equals startAngle + the legacy target angle.
+// Assumes unrotated elements, like the legacy helper effectively did.
+const rotateViaCornerRing = (
+  elements: ExcalidrawElement[],
+  mouseMove: [deltaX: number, deltaY: number],
+  keyboardModifiers: KeyboardModifiers = {},
+) => {
+  if (elements.some(isFrameLikeElement)) {
+    throw new Error(`There is no "rotation" handle for this selection`);
+  }
+  const zoom = h.state.zoom.value;
+  const size = 8; // mouse handle size, see transformHandles.ts
+  let bounds: [number, number, number, number];
+  let center: [number, number];
+  let margin: number;
+  let spacing: number;
+  if (elements.length === 1) {
+    const [element] = elements;
+    const [ex1, ey1, ex2, ey2] = getElementAbsoluteCoords(
+      element,
+      arrayToMap(h.elements),
+      true,
+    );
+    bounds = [ex1, ey1, ex2, ey2];
+    // the rotation formula pivots on the bounds without bound text
+    const [x1, y1, x2, y2] = getElementAbsoluteCoords(
+      element,
+      arrayToMap(h.elements),
+    );
+    center = [(x1 + x2) / 2, (y1 + y2) / 2];
+    margin = isLinearElement(element)
+      ? DEFAULT_TRANSFORM_HANDLE_SPACING + 8
+      : isImageElement(element)
+      ? 0
+      : DEFAULT_TRANSFORM_HANDLE_SPACING;
+    spacing = isImageElement(element) ? 0 : DEFAULT_TRANSFORM_HANDLE_SPACING;
+  } else {
+    const [x1, y1, x2, y2] = getCommonBounds(elements);
+    bounds = [x1, y1, x2, y2];
+    center = [(x1 + x2) / 2, (y1 + y2) / 2];
+    margin = 4;
+    spacing = DEFAULT_TRANSFORM_HANDLE_SPACING;
+  }
+  const [x1, y1] = bounds;
+  const [cx, cy] = center;
+  const centeringOffset = (size - spacing * 2) / (2 * zoom);
+
+  const legacyHandle = [
+    (bounds[0] + bounds[2]) / 2,
+    y1 -
+      margin / zoom -
+      size / zoom +
+      centeringOffset -
+      16 / zoom +
+      size / 2 / zoom,
+  ];
+  const legacyEnd = [
+    legacyHandle[0] + mouseMove[0],
+    legacyHandle[1] + mouseMove[1],
+  ];
+  const targetAngle =
+    (5 * Math.PI) / 2 + Math.atan2(legacyEnd[1] - cy, legacyEnd[0] - cx);
+
+  const nwHandleCenter = [
+    x1 - margin / zoom - size / zoom + centeringOffset + size / 2 / zoom,
+    y1 - margin / zoom - size / zoom + centeringOffset + size / 2 / zoom,
+  ];
+  const start = [nwHandleCenter[0] - 9 / zoom, nwHandleCenter[1] - 9 / zoom];
+  const startAngle = Math.atan2(start[1] - cy, start[0] - cx);
+  const radius = Math.hypot(start[0] - cx, start[1] - cy);
+  const endAngle = startAngle + targetAngle;
+  const end = [
+    cx + radius * Math.cos(endAngle),
+    cy + radius * Math.sin(endAngle),
+  ];
+
+  Keyboard.withModifierKeys(keyboardModifiers, () => {
+    mouse.reset();
+    mouse.down(start[0], start[1]);
+    mouse.move(end[0] - start[0], end[1] - start[1]);
+    mouse.up();
+  });
+};
+
 const transform = (
   element: ExcalidrawElement | ExcalidrawElement[],
   handle: TransformHandleType,
@@ -361,6 +457,11 @@ const transform = (
       ),
     });
   });
+  if (handle === "rotation") {
+    // actionboard
+    rotateViaCornerRing(elements, mouseMove, keyboardModifiers);
+    return;
+  }
   let handleCoords: TransformHandle | undefined;
   if (elements.length === 1) {
     handleCoords = getTransformHandles(
@@ -387,8 +488,23 @@ const transform = (
     throw new Error(`There is no "${handle}" handle for this selection`);
   }
 
-  const clientX = handleCoords[0] + handleCoords[2] / 2;
-  const clientY = handleCoords[1] + handleCoords[3] / 2;
+  let clientX = handleCoords[0] + handleCoords[2] / 2;
+  let clientY = handleCoords[1] + handleCoords[3] / 2;
+
+  // actionboard: the edge midpoints belong to the connector dots — grab side
+  // handles slightly along the edge instead, like a user would. Resizing is
+  // delta-based, so the result is unchanged.
+  if (handle === "n" || handle === "s" || handle === "e" || handle === "w") {
+    const [x1, y1, x2, y2] =
+      elements.length === 1
+        ? getElementAbsoluteCoords(elements[0], arrayToMap(h.elements), true)
+        : getCommonBounds(elements);
+    if (handle === "n" || handle === "s") {
+      clientX += Math.min(24, (x2 - x1) / 4);
+    } else {
+      clientY += Math.min(24, (y2 - y1) / 4);
+    }
+  }
 
   Keyboard.withModifierKeys(keyboardModifiers, () => {
     mouse.reset();

@@ -433,6 +433,14 @@ import ConvertElementTypePopup, {
 
 import { activeConfirmDialogAtom } from "./ActiveConfirmDialog";
 import { AppArrowText } from "./App.arrowText";
+import {
+  abConnectorDotHover,
+  abConnectorDotPointerDown,
+} from "../actionboard/connectorDots"; // actionboard
+import {
+  abCornerRotationHover,
+  abMaybeStartCornerRotation,
+} from "../actionboard/cornerRotation"; // actionboard
 import { AppCursor } from "./App.cursor";
 import { AppDrawShape } from "./App.drawshape";
 import { AppFlowchart } from "./App.flowchart";
@@ -7978,6 +7986,15 @@ class App extends React.Component<AppProps, AppState> {
       return;
     }
 
+    // actionboard: connector dots & corner rotation hover affordances
+    if (
+      !isOverScrollBar &&
+      (abConnectorDotHover(this, event, scenePointerX, scenePointerY) ||
+        abCornerRotationHover(this, event, scenePointerX, scenePointerY))
+    ) {
+      return;
+    }
+
     if (
       selectedElements.length === 1 &&
       !isOverScrollBar &&
@@ -9268,6 +9285,10 @@ class App extends React.Component<AppProps, AppState> {
     event: React.PointerEvent<HTMLElement>,
     pointerDownState: PointerDownState,
   ): boolean => {
+    // actionboard: a press on a connector dot starts an arrow instead
+    if (abConnectorDotPointerDown(this, event, pointerDownState)) {
+      return true;
+    }
     if (isSelectionLikeTool(this.state.activeTool.type)) {
       const elements = this.scene.getNonDeletedElements();
       const elementsMap = this.scene.getNonDeletedElementsMap();
@@ -9328,6 +9349,8 @@ class App extends React.Component<AppProps, AppState> {
           this.editorInterface,
         );
       }
+      // actionboard: a press in a corner's rotation ring rotates
+      abMaybeStartCornerRotation(this, event, pointerDownState);
       if (pointerDownState.resize.handleType) {
         pointerDownState.resize.isResizing = true;
         pointerDownState.resize.offset = tupleToCoors(

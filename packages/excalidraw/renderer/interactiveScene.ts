@@ -21,6 +21,7 @@ import {
   THEME,
 } from "@excalidraw/common";
 
+import { abRenderConnectorDots } from "../actionboard/connectorDots"; // actionboard
 import {
   deconstructDiamondElement,
   deconstructRectanguloidElement,
@@ -2020,6 +2021,8 @@ const _renderInteractiveScene = ({
     }
     context.restore();
   }
+
+  abRenderConnectorDots(context, appState, elementsMap, renderConfig); // actionboard
 
   appState.searchMatches?.matches.forEach(({ id, focus, matchedLines }) => {
     const element = elementsMap.get(id);

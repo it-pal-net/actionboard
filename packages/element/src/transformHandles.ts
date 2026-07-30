@@ -13,6 +13,7 @@ import type {
 } from "@excalidraw/excalidraw/types";
 import type { Bounds } from "@excalidraw/common";
 
+import { abWithoutRotationHandle } from "./actionboard/cornerRotation"; // actionboard
 import { getElementAbsoluteCoords } from "./bounds";
 import {
   isElbowArrow,
@@ -139,6 +140,7 @@ export const getTransformHandlesFromCoords = (
   margin = 4,
   spacing = DEFAULT_TRANSFORM_HANDLE_SPACING,
 ): TransformHandles => {
+  omitSides = abWithoutRotationHandle(omitSides); // actionboard: rotation starts from the corners instead
   const size = transformHandleSizes[pointerType];
   const handleWidth = size / zoom.value;
   const handleHeight = size / zoom.value;

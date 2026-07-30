@@ -20,6 +20,7 @@ import type { PointerDownState } from "@excalidraw/excalidraw/types";
 
 import type { Mutable } from "@excalidraw/common/utility-types";
 
+import { abAdjustRotationAngle } from "./actionboard/cornerRotation"; // actionboard
 import {
   getArrowLocalFixedPoints,
   unbindBindingElement,
@@ -219,6 +220,7 @@ const rotateSingleElement = (
   } else {
     angle = ((5 * Math.PI) / 2 +
       Math.atan2(pointerY - cy, pointerX - cx)) as Radians;
+    angle = abAdjustRotationAngle(angle, cx, cy, pointerX, pointerY); // actionboard
     if (shouldRotateWithDiscreteAngle) {
       angle = (angle + SHIFT_LOCKING_ANGLE / 2) as Radians;
       angle = (angle - (angle % SHIFT_LOCKING_ANGLE)) as Radians;
@@ -414,6 +416,14 @@ const rotateMultipleElements = (
   const elementsMap = scene.getNonDeletedElementsMap();
   let centerAngle =
     (5 * Math.PI) / 2 + Math.atan2(pointerY - centerY, pointerX - centerX);
+  // actionboard
+  centerAngle = abAdjustRotationAngle(
+    centerAngle as Radians,
+    centerX,
+    centerY,
+    pointerX,
+    pointerY,
+  );
   if (shouldRotateWithDiscreteAngle) {
     centerAngle += SHIFT_LOCKING_ANGLE / 2;
     centerAngle -= centerAngle % SHIFT_LOCKING_ANGLE;

@@ -13267,7 +13267,9 @@ exports[`regression tests > supports nested groups > [end of test] appState 1`] 
   "gridStep": 5,
   "height": 768,
   "hoveredArrowTextAnchor": null,
-  "hoveredElementIds": {},
+  "hoveredElementIds": {
+    "id3": true,
+  },
   "isBindingEnabled": true,
   "isCropping": false,
   "isLoading": false,

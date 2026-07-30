@@ -70,10 +70,26 @@ export default defineConfig({
         find: /^@excalidraw\/laser-pointer\/(.*?)/,
         replacement: path.resolve(__dirname, "./packages/laser-pointer/src/$1"),
       },
+      {
+        // actionboard: node ≥22 refuses the directory import radix-ui ships;
+        // point it at the shim's entry file so the suite collects
+        find: /^use-sync-external-store\/shim$/,
+        replacement: path.resolve(
+          __dirname,
+          "node_modules/use-sync-external-store/shim/index.js",
+        ),
+      },
     ],
   },
   //@ts-ignore
   test: {
+    // actionboard: process radix through vite so its
+    // `use-sync-external-store/shim` directory import resolves on node ≥22
+    server: {
+      deps: {
+        inline: [/radix-ui/, /use-sync-external-store/],
+      },
+    },
     // Since hooks are running in stack in v2, which means all hooks run serially whereas
     // we need to run them in parallel
     sequence: {

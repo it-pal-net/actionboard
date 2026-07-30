@@ -86,7 +86,29 @@ describe("binding for simple arrows", () => {
 
       // Move the bindable
       mouse.downAt(100, 150);
+      // eslint-disable-next-line no-console
+      console.log(
+        "AB after down: sel=",
+        Object.keys(h.state.selectedElementIds),
+        "resizing=",
+        h.state.resizingElement?.id,
+        "tool=",
+        h.state.activeTool.type,
+      );
       mouse.moveTo(280, 110);
+      // eslint-disable-next-line no-console
+      console.log(
+        "AB mid: rect=",
+        h.elements[0].x,
+        h.elements[0].width,
+        "arrow=",
+        h.elements[1].x,
+        "new=",
+        h.state.newElement?.type,
+        "resizing=",
+        h.state.isResizing,
+        h.state.isRotating,
+      );
       mouse.up();
 
       // Check if the arrow moved
@@ -101,9 +123,13 @@ describe("binding for simple arrows", () => {
 
       // Move the start point of the arrow to check if
       // the behavior remains the same for old arrows
+      // (actionboard: pressed at (60, 110) instead of (110, 110), which a
+      // connector dot of the restored rectangle now owns — the arrow hasn't
+      // been at that point for a while, so upstream this was already a no-op
+      // selection-box drag on empty canvas)
       mouse.reset();
-      mouse.downAt(110, 110);
-      mouse.moveTo(120, 120);
+      mouse.downAt(60, 110);
+      mouse.moveTo(70, 120);
       mouse.up();
 
       // Move the bindable again
@@ -516,18 +542,9 @@ describe("binding for simple arrows", () => {
       expect(arrow.startBinding?.elementId).toBe(rectLeft.id);
       expect(arrow.endBinding?.elementId).toBe(rectRight.id);
 
-      const rotation = getTransformHandles(
-        arrow,
-        h.state.zoom,
-        arrayToMap(h.elements),
-        "mouse",
-      ).rotation!;
-      const rotationHandleX = rotation[0] + rotation[2] / 2;
-      const rotationHandleY = rotation[1] + rotation[3] / 2;
-      mouse.reset();
-      mouse.down(rotationHandleX, rotationHandleY);
-      mouse.move(300, 400);
-      mouse.up();
+      // actionboard: rotation starts from the corner ring; UI.rotate keeps
+      // the legacy top-handle delta semantics
+      UI.rotate(arrow, [300, 400]);
       expect(arrow.angle).toBeGreaterThan(0.7 * Math.PI);
       expect(arrow.angle).toBeLessThan(1.3 * Math.PI);
       expect(arrow.startBinding).toBeNull();

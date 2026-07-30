@@ -56,6 +56,7 @@ export const getNonDeletedElements = <T extends ExcalidrawElement>(
   elements: readonly T[],
 ): readonly NonDeleted<T>[] => elements.filter(isNonDeletedElement);
 
+export * from "./actionboard/cornerRotation"; // actionboard
 export * from "./align";
 export * from "./arrowEndpointText";
 export * from "./binding";

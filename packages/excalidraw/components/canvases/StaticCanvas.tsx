@@ -7,6 +7,7 @@ import type {
   NonDeletedSceneElementsMap,
 } from "@excalidraw/element/types";
 
+import { abStaticHoveredElementIds } from "../../actionboard/connectorDots"; // actionboard
 import { isRenderThrottlingEnabled } from "../../reactUtils";
 import { renderStaticScene } from "../../renderer/staticScene";
 
@@ -83,7 +84,7 @@ const getRelevantAppStateProps = (appState: AppState): StaticCanvasAppState => {
     height: appState.height,
     viewModeEnabled: appState.viewModeEnabled,
     openDialog: appState.openDialog,
-    hoveredElementIds: appState.hoveredElementIds,
+    hoveredElementIds: abStaticHoveredElementIds(appState), // actionboard
     offsetLeft: appState.offsetLeft,
     offsetTop: appState.offsetTop,
     theme: appState.theme,

@@ -6051,6 +6051,67 @@ exports[`history > multiplayer undo/redo > should iterate through the history wh
 }
 `;
 
+exports[`history > multiplayer undo/redo > should iterate through the history when editing group contains only remotely deleted elements > [end of test] element 2 1`] = `
+{
+  "angle": 0,
+  "backgroundColor": "transparent",
+  "boundElements": null,
+  "customData": undefined,
+  "elbowed": false,
+  "endArrowhead": "arrow",
+  "endBinding": {
+    "elementId": "id1",
+    "fixedPoint": [
+      "0.50010",
+      0,
+    ],
+    "mode": "orbit",
+  },
+  "fillStyle": "solid",
+  "frameId": null,
+  "groupIds": [],
+  "height": "38.01000",
+  "id": "id2",
+  "index": "a2",
+  "isDeleted": false,
+  "link": null,
+  "locked": false,
+  "opacity": 100,
+  "points": [
+    [
+      0,
+      0,
+    ],
+    [
+      "38.01000",
+      "38.01000",
+    ],
+  ],
+  "roughness": 1,
+  "roundness": {
+    "type": 2,
+  },
+  "startArrowhead": null,
+  "startBinding": {
+    "elementId": "id0",
+    "fixedPoint": [
+      "0.50010",
+      0,
+    ],
+    "mode": "orbit",
+  },
+  "strokeColor": "#1e1e1e",
+  "strokeStyle": "solid",
+  "strokeWidth": 2,
+  "type": "arrow",
+  "updated": 1,
+  "version": 5,
+  "width": "38.01000",
+  "x": "106.00000",
+  "y": "55.99000",
+}
+`;
+
 exports[`history > multiplayer undo/redo > should iterate through the history when editing group contains only remotely deleted elements > [end of test] number of elements 1`] = `2`;
 
 exports[`history > multiplayer undo/redo > should iterate through the history when editing group contains only remotely deleted elements > [end of test] number of renders 1`] = `13`;
@@ -6839,6 +6900,60 @@ exports[`history > multiplayer undo/redo > should iterate through the history wh
   "width": 100,
   "x": 30,
   "y": 30,
+}
+`;
+
+exports[`history > multiplayer undo/redo > should iterate through the history when selected elements relate only to remotely deleted elements > [end of test] element 3 1`] = `
+{
+  "angle": 0,
+  "backgroundColor": "transparent",
+  "boundElements": null,
+  "customData": undefined,
+  "elbowed": false,
+  "endArrowhead": "arrow",
+  "endBinding": null,
+  "fillStyle": "solid",
+  "frameId": null,
+  "groupIds": [],
+  "height": 0,
+  "id": "id3",
+  "index": "a3",
+  "isDeleted": false,
+  "link": null,
+  "locked": false,
+  "opacity": 100,
+  "points": [
+    [
+      0,
+      0,
+    ],
+    [
+      0,
+      0,
+    ],
+  ],
+  "roughness": 1,
+  "roundness": {
+    "type": 2,
+  },
+  "startArrowhead": null,
+  "startBinding": {
+    "elementId": "id0",
+    "fixedPoint": [
+      "0.50010",
+      0,
+    ],
+    "mode": "orbit",
+  },
+  "strokeColor": "#1e1e1e",
+  "strokeStyle": "solid",
+  "strokeWidth": 2,
+  "type": "arrow",
+  "updated": 1,
+  "version": 4,
+  "width": 0,
+  "x": 60,
+  "y": 10,
 }
 `;
 
@@ -8057,6 +8172,36 @@ exports[`history > multiplayer undo/redo > should iterate through the history wh
 }
 `;
 
+exports[`history > multiplayer undo/redo > should iterate through the history when z-index changes do not produce visible change and we synced all indices > [end of test] element 3 1`] = `
+{
+  "angle": 0,
+  "backgroundColor": "transparent",
+  "boundElements": null,
+  "customData": undefined,
+  "fillStyle": "solid",
+  "frameId": null,
+  "groupIds": [],
+  "height": 100,
+  "id": "id2",
+  "index": "a2",
+  "isDeleted": false,
+  "link": null,
+  "locked": false,
+  "opacity": 100,
+  "roughness": 1,
+  "roundness": null,
+  "strokeColor": "#1e1e1e",
+  "strokeStyle": "solid",
+  "strokeWidth": 2,
+  "type": "rectangle",
+  "updated": 1,
+  "version": 2,
+  "width": 100,
+  "x": 30,
+  "y": 30,
+}
+`;
+
 exports[`history > multiplayer undo/redo > should iterate through the history when z-index changes do not produce visible change and we synced all indices > [end of test] number of elements 1`] = `3`;
 
 exports[`history > multiplayer undo/redo > should iterate through the history when z-index changes do not produce visible change and we synced all indices > [end of test] number of renders 1`] = `11`;
@@ -8412,6 +8557,36 @@ exports[`history > multiplayer undo/redo > should iterate through the history wh
 }
 `;
 
+exports[`history > multiplayer undo/redo > should iterate through the history when z-index changes do not produce visible change and we synced changed indices > [end of test] element 3 1`] = `
+{
+  "angle": 0,
+  "backgroundColor": "transparent",
+  "boundElements": null,
+  "customData": undefined,
+  "fillStyle": "solid",
+  "frameId": null,
+  "groupIds": [],
+  "height": 100,
+  "id": "id2",
+  "index": "a2",
+  "isDeleted": false,
+  "link": null,
+  "locked": false,
+  "opacity": 100,
+  "roughness": 1,
+  "roundness": null,
+  "strokeColor": "#1e1e1e",
+  "strokeStyle": "solid",
+  "strokeWidth": 2,
+  "type": "rectangle",
+  "updated": 1,
+  "version": 2,
+  "width": 100,
+  "x": 30,
+  "y": 30,
+}
+`;
+
 exports[`history > multiplayer undo/redo > should iterate through the history when z-index changes do not produce visible change and we synced changed indices > [end of test] number of elements 1`] = `3`;
 
 exports[`history > multiplayer undo/redo > should iterate through the history when z-index changes do not produce visible change and we synced changed indices > [end of test] number of renders 1`] = `11`;
@@ -8620,7 +8795,9 @@ exports[`history > multiplayer undo/redo > should not let remote changes to inte
   "gridStep": 5,
   "height": 0,
   "hoveredArrowTextAnchor": null,
-  "hoveredElementIds": {},
+  "hoveredElementIds": {
+    "id13": true,
+  },
   "isBindingEnabled": true,
   "isCropping": false,
   "isLoading": false,
@@ -15658,6 +15835,60 @@ exports[`history > singleplayer undo/redo > should not end up with history entry
   "version": 2,
   "width": 100,
   "x": 0,
+  "y": 0,
+}
+`;
+
+exports[`history > singleplayer undo/redo > should not end up with history entry when there are no appstate changes > [end of test] element 2 1`] = `
+{
+  "angle": 0,
+  "backgroundColor": "transparent",
+  "boundElements": null,
+  "customData": undefined,
+  "elbowed": false,
+  "endArrowhead": "arrow",
+  "endBinding": null,
+  "fillStyle": "solid",
+  "frameId": null,
+  "groupIds": [],
+  "height": 0,
+  "id": "id2",
+  "index": "a2",
+  "isDeleted": false,
+  "link": null,
+  "locked": false,
+  "opacity": 100,
+  "points": [
+    [
+      0,
+      0,
+    ],
+    [
+      0,
+      0,
+    ],
+  ],
+  "roughness": 1,
+  "roundness": {
+    "type": 2,
+  },
+  "startArrowhead": null,
+  "startBinding": {
+    "elementId": "id0",
+    "fixedPoint": [
+      "0.50010",
+      0,
+    ],
+    "mode": "orbit",
+  },
+  "strokeColor": "#1e1e1e",
+  "strokeStyle": "solid",
+  "strokeWidth": 2,
+  "type": "arrow",
+  "updated": 1,
+  "version": 4,
+  "width": 0,
+  "x": 50,
   "y": 0,
 }
 `;
