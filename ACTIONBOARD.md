@@ -65,3 +65,4 @@ Every upstream file we modify or replace gets a row here.
 | `packages/excalidraw/renderer/staticScene.ts` | hook (import + guarded condition in `renderLinkIcon`) | card embeds render no link icon — predicate lives in `packages/excalidraw/actionboard/cardEmbeds.ts` |
 | `packages/excalidraw/components/hyperlink/helpers.ts` | hook (import + guarded condition in `isPointHittingLink`) | card embeds expose no link hover/click target — same ActionBoard module |
 | `packages/excalidraw/fonts/ExcalidrawFontFace.ts` | hook (fallback push guarded by `urls.length === 0`) | esm.sh font fallback only when no `EXCALIDRAW_ASSET_PATH` URL resolved — a dead CDN source trips strict `font-src` CSPs |
+| `CLAUDE.md` | prepended section | "ActionBoard fork rules — read first" pointing here, so AI agents load the divergence rules automatically |
