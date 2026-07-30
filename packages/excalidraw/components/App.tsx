@@ -441,6 +441,7 @@ import {
   abCornerRotationHover,
   abMaybeStartCornerRotation,
 } from "../actionboard/cornerRotation"; // actionboard
+import { hasCardPayload } from "../actionboard/cardEmbeds"; // actionboard
 import { AppCursor } from "./App.cursor";
 import { AppDrawShape } from "./App.drawshape";
 import { AppFlowchart } from "./App.flowchart";
@@ -2007,7 +2008,7 @@ class App extends React.Component<AppProps, AppState> {
                     : POINTER_EVENTS.disabled,
                 }}
               >
-                {isHovered && (
+                {isHovered && !hasCardPayload(el) && (
                   <div className="excalidraw__embeddable-hint">
                     {t("buttons.embeddableInteractionButton")}
                   </div>
