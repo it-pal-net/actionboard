@@ -5,7 +5,7 @@ import {
   updateStable,
 } from "@excalidraw/common";
 import {
-  bindOrUnbindBindingElement,
+  bindBindingElement,
   getElementAbsoluteCoords,
   isBindableElement,
   isBindingElement,
@@ -13,13 +13,16 @@ import {
   isFrameLikeElement,
 } from "@excalidraw/element";
 import { pointFrom, pointRotateRads } from "@excalidraw/math";
+import { flushSync } from "react-dom";
 
 import type {
   ElementsMap,
+  ExcalidrawBindableElement,
   ExcalidrawElement,
+  NonDeleted,
   NonDeletedExcalidrawElement,
 } from "@excalidraw/element/types";
-import type { LocalPoint, Radians } from "@excalidraw/math";
+import type { GlobalPoint, Radians } from "@excalidraw/math";
 
 import type { InteractiveCanvasRenderConfig } from "../scene/types";
 import type {
@@ -114,7 +117,7 @@ export const abHitConnectorDots = (
 
 export const abCanHostConnectorDots = (
   element: ExcalidrawElement | null | undefined,
-): element is NonDeletedExcalidrawElement =>
+): element is NonDeleted<ExcalidrawBindableElement> =>
   isBindableElement(element, false) && !isFrameLikeElement(element);
 
 export const abDotsVisibleForBounds = (
@@ -259,8 +262,10 @@ const clearHover = (app: AppHandle) => {
   }
 };
 
-const dotHostCandidates = (app: AppHandle): NonDeletedExcalidrawElement[] => {
-  const candidates: NonDeletedExcalidrawElement[] = [];
+const dotHostCandidates = (
+  app: AppHandle,
+): NonDeleted<ExcalidrawBindableElement>[] => {
+  const candidates: NonDeleted<ExcalidrawBindableElement>[] = [];
   const selected = app.scene.getSelectedElements(app.state);
   if (selected.length === 1 && abCanHostConnectorDots(selected[0])) {
     candidates.push(selected[0]);
@@ -353,8 +358,7 @@ export const abConnectorDotHover = (
 
 const ensureStartBinding = (
   app: AppHandle,
-  event: React.PointerEvent<HTMLElement>,
-  source: NonDeletedExcalidrawElement,
+  source: NonDeleted<ExcalidrawBindableElement>,
   dot: ConnectorDot,
 ) => {
   const arrow = app.state.newElement;
@@ -366,19 +370,18 @@ const ensureStartBinding = (
   ) {
     return;
   }
-  bindOrUnbindBindingElement(
+  // The arrow starts at the dot's center, AB_DOT_EDGE_OFFSET screen px outside
+  // the element — beyond maxBindingDistance at zoom <= 1, so the strategy-driven
+  // binding (which hit-tests at the arrow's own start point) misses the host.
+  // Bind directly instead: orbit mode anchored at the dot's edge midpoint, the
+  // same binding upstream produces for an arrow started just outside a shape.
+  bindBindingElement(
     arrow,
-    new Map([[0, { point: pointFrom<LocalPoint>(0, 0), isDragging: false }]]),
-    dot.anchorX,
-    dot.anchorY,
+    source,
+    "orbit",
+    "start",
     app.scene,
-    app.state,
-    {
-      newArrow: true,
-      initialBinding: true,
-      altKey: event.altKey,
-      angleLocked: event.shiftKey,
-    },
+    pointFrom<GlobalPoint>(dot.anchorX, dot.anchorY),
   );
 };
 
@@ -403,7 +406,7 @@ export const abConnectorDotPointerDown = (
   }
   const elementsMap = app.scene.getNonDeletedElementsMap();
   const zoomValue = app.state.zoom.value;
-  let source: NonDeletedExcalidrawElement | null = null;
+  let source: NonDeleted<ExcalidrawBindableElement> | null = null;
   let dot: ConnectorDot | null = null;
   for (const candidate of dotHostCandidates(app)) {
     const candidateDot = hitElementConnectorDot(
@@ -424,17 +427,18 @@ export const abConnectorDotPointerDown = (
     return false;
   }
 
-  const sourceElement = source;
-  const sourceDot = dot;
-  app.setState(
-    {
+  // Commit the tool switch synchronously, then hand the same pointer event to
+  // the stock arrow flow at event-handler level. A setState callback would run
+  // the hand-off inside React's commit phase, where the arrow flow's own
+  // flushSync (which publishes `newElement` to state) is deferred with a
+  // warning — leaving `ensureStartBinding` reading a null newElement.
+  flushSync(() => {
+    app.setState({
       activeTool: updateActiveTool(app.state, { type: "arrow" }),
-    },
-    () => {
-      app.handleCanvasPointerDown(event);
-      ensureStartBinding(app, event, sourceElement, sourceDot);
-    },
-  );
+    });
+  });
+  app.handleCanvasPointerDown(event);
+  ensureStartBinding(app, source, dot);
   return true;
 };
 
