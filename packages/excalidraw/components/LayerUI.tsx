@@ -379,6 +379,7 @@ const LayerUI = ({
                             />
                           </Island>
                         )}
+                        <tunnels.ABToolbarExtraTunnel.Out />
                       </Stack.Row>
                     </Stack.Col>
                   </div>

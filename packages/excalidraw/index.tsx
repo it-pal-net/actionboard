@@ -20,6 +20,7 @@ import App, {
 } from "./components/App";
 import { InitializeApp } from "./components/InitializeApp";
 import Footer from "./components/footer/FooterCenter";
+import ToolbarExtra from "./actionboard/ToolbarExtra";
 import LiveCollaborationTrigger from "./components/live-collaboration/LiveCollaborationTrigger";
 import MainMenu from "./components/main-menu/MainMenu";
 import WelcomeScreen from "./components/welcome-screen/WelcomeScreen";
@@ -452,6 +453,7 @@ export { parseLibraryTokensFromUrl, useHandleLibrary } from "./data/library";
 export { Sidebar } from "./components/Sidebar/Sidebar";
 export { Button } from "./components/Button";
 export { Footer };
+export { ToolbarExtra };
 export { MainMenu };
 export { Ellipsify } from "./components/Ellipsify";
 export {
