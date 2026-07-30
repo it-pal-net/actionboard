@@ -35,6 +35,8 @@ import {
   getLinkHandleFromCoords,
 } from "../components/hyperlink/helpers";
 
+import { hasCardPayload } from "../actionboard/cardEmbeds"; // actionboard
+
 import { bootstrapCanvas, getNormalizedCanvasDimensions } from "./helpers";
 
 import type {
@@ -172,7 +174,12 @@ const renderLinkIcon = (
   appState: StaticCanvasAppState,
   elementsMap: ElementsMap,
 ) => {
-  if (element.link && !appState.selectedElementIds[element.id]) {
+  if (
+    element.link &&
+    // actionboard: card embeds carry a link but render no link icon
+    !hasCardPayload(element) &&
+    !appState.selectedElementIds[element.id]
+  ) {
     const [x1, y1, x2, y2] = getElementAbsoluteCoords(element, elementsMap);
     const [x, y, width, height] = getLinkHandleFromCoords(
       [x1, y1, x2, y2],

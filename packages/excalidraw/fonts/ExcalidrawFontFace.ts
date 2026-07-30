@@ -164,7 +164,11 @@ export class ExcalidrawFontFace {
     }
 
     // fallback url for bundled fonts
-    urls.push(new URL(assetUrl, ExcalidrawFontFace.ASSETS_FALLBACK_URL));
+    // actionboard: only when nothing local resolved — a dead esm.sh source in
+    // the FontFace still trips strict `font-src` CSPs on every load
+    if (urls.length === 0) {
+      urls.push(new URL(assetUrl, ExcalidrawFontFace.ASSETS_FALLBACK_URL));
+    }
 
     return urls;
   }

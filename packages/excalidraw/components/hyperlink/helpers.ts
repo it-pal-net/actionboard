@@ -14,6 +14,8 @@ import type {
 
 import type { AppState } from "../../types";
 
+import { hasCardPayload } from "../../actionboard/cardEmbeds"; // actionboard
+
 export const DEFAULT_LINK_SIZE = 12;
 
 export const EXTERNAL_LINK_IMG = document.createElement("img");
@@ -86,7 +88,12 @@ export const isPointHittingLink = (
   [x, y]: GlobalPoint,
   isMobile: boolean,
 ) => {
-  if (!element.link || appState.selectedElementIds[element.id]) {
+  if (
+    !element.link ||
+    // actionboard: card embeds carry a link but expose no link hit target
+    hasCardPayload(element) ||
+    appState.selectedElementIds[element.id]
+  ) {
     return false;
   }
   if (
